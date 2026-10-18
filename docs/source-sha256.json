@@ -1,0 +1,12 @@
+{
+  "completion_qa/__init__.py": "0d05cb79b15a011a3f16627732d300ec45700c60b359b9c5dc882dca47632359",
+  "completion_qa/checker.py": "b4888cc23f35d114387dde36fb5da277244099fe5e2d763a498a5b604fdf74fc",
+  "completion_qa/core.py": "57c04bcbc0a74e355df1f6aea61dbef5cc8ba6781dda63a3ab58b35dabf1f72a",
+  "completion_qa/editorial.py": "82622d64afb9b30e4bb736d5fe63936f72648ce17a122288b5e6092edfdc3b80",
+  "completion_qa/host.py": "560e8fc7744655294aaef07d0f5ae7f0134a0a5207ab48c9781d881ec3f66a47",
+  "completion_qa/manifest.py": "bb74e94d4ab01a13d9d12baecbb9b33bdd075cabb2b105e354a92684da92d317",
+  "completion_qa/reporting.py": "e25f6ded20161622bc1534e92ab05b3c677e1ba3a6b43f9bb8bd315449a2d400",
+  "completion_qa/sampling.py": "f01a1160ce467952408c040a1c5b6556387ffc9d7cdbbc0caaf44f6cbdefbce4",
+  "completion_qa/server.py": "fc7e15048ce42a45141f4a31e82992699bffac9697f33654e6c0a62fd62c7ca2",
+  "completion_qa/stop_wrapper.py": "3103bd61ec9cb5f94ced06714e0ad4f2cc03faa6f9c99dbdebb6ee061eadd60e"
+}
