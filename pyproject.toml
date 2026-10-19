@@ -2,11 +2,13 @@
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 [project]
-name = "completion-qa-mcp"
-version = "0.4.0"
+name = "completion-review-plugin"
+version = "0.1.2"
 requires-python = ">=3.11"
-dependencies = ["mcp==1.29.0"]
+description = "Explicit specification approval and bounded review plugin"
 [project.scripts]
-completion-qa-mcp = "completion_qa.server:main"
+completion-review = "completion_plugin.cli:main"
 [tool.setuptools.packages.find]
-include = ["completion_qa*"]
+include = ["completion_plugin*"]
+[project.optional-dependencies]
+mcp = ["mcp>=1.29,<2"]

@@ -1,0 +1,28 @@
+{
+  "name": "@completionqa/dsh-adapter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DSH Config and native team bridge; model selection unsupported; real-host validation pending",
+  "exports": {
+    ".": "./index.js",
+    "./bridge": "./bridge.js"
+  },
+  "files": [
+    "index.js",
+    "bridge.js",
+    "README.md",
+    "profiles.js",
+    "integration-example.mjs"
+  ],
+  "scripts": {
+    "test": "node --test bridge.test.js",
+    "check": "node --check index.js && node --check bridge.js && node --check profiles.js"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "*"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

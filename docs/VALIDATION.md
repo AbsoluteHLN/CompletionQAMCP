@@ -1,17 +1,17 @@
-# Private source release validation
+# Current validation
 
-Date: 2026-10-18 UTC. Version: 0.4.0.
+2026-10-19 UTC; independent plugin 0.1.0, approved design spec-v002.
 
-- `python -m unittest discover -s tests -v`: **134 test methods passed**, including author tests and independent negative/regression suites, in the cleaned release directory.
-- The first packaging test run found six test-loader subprocess path errors after consolidating formerly separate review folders. Relative project paths were corrected; the entire 134-test suite was rerun successfully. No production code changed.
-- Ten `completion_qa/*.py` production files match the prior v0.4 SHA-256 manifest exactly; see `source-sha256.json`.
-- Real SDK stdio subprocess tests, command-wrapper tests, stale-source checks, evidence mutation/alias isolation and synthetic provider protection tests are included. They do not establish real host Stop triggering, LLM quality or device operation.
-- Real model/provider, browser/native device and real automatic host Stop end-to-end acceptance: **not run / not integrated**.
-- Historical project reports, raw environment logs, Library identifiers and personal addresses are excluded. The prose fixture contains invented numbers and generic names; corresponding assertions were updated without weakening preservation/negative tests.
-- No dependencies are vendored. Installed test dependency: official `mcp==1.29.0`; Python 3.12. Original code is proprietary; dependency licenses remain separate.
+Current aggregate: 147 Python unittest methods passed; 13 JavaScript tests passed. These counts cover this new code, not legacy v0.8 tests. Independent workflow audit contributes 38 methods within that aggregate, not an extra additive count.
 
-## Safety scan scope
+Actual local processes tested: Python syntax checks, temporary trusted unittest subprocesses, real MCP stdio initialize/list/call, real PTY wizard acceptance and cancellation. PTY input is a synthetic operator fixture, not an actual user's approval record.
 
-A text scan checked all released files for personal mail addresses, internal Library/file IDs, execution workspace/home paths, private project names, common credential formats and private-key headers. No matches remained. Generic adversarial `/etc/passwd` and `/tmp` fixture literals are intentionally retained as negative path tests, not environment disclosures.
+Simulated backends: host model generation/independent prose review, profile model discovery/smoke, DSH Config/native-team contracts. They do not prove actual provider access, billing, native agent availability, DSH loading or real Stop behavior.
 
-This scan is a bounded release hygiene check, not a security audit or proof that no secrets can exist. The package performs no automatic network calls or hook installation on import. Keep deployment configuration and future credentials outside source control.
+Important regression fixes include stale successful task results after revision, write-scope aliases, malformed restored state, generator dependency/check omissions, mutable result leakage, undetected concurrent writer overwrite, deleted-state recreation, nonfinite usage, stale evidence resurrection, changed project dependencies after test execution, syntax overwriting failed real tests, omitted required text checks and completion after file changes.
+
+Publication/install not performed. Source package excludes transfer helpers and earlier product archives. Source scan found no retained content-fingerprint algorithm or legacy receipt fields in runtime code.
+
+Final user-workflow review additionally verified approval-mode matching, non-boolean opt-in rejection, explicit unverified-source acknowledgement, and cancel/resume over real local PTY fixtures. No remaining blocking issue was reported in that review.
+
+DSH integration example syntax and local action-store restart/writer exclusion/return isolation passed. npm pack with a temporary cache succeeded after its default cache path was unavailable; six package files were included. No runtime dependency was installed.

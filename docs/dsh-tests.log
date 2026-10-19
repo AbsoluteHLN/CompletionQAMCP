@@ -1,0 +1,26 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @completionqa/dsh-adapter@0.1.0 test
+> node --test bridge.test.js
+
+✔ root Agent identity and member reuse; unsupported model blocked (3.580824ms)
+✔ monotonic managed-agent guard (0.372976ms)
+✔ uncertain messages never retry including fresh IDs (0.89396ms)
+✔ uncertain spawns do not retry and retain scope reservations (0.900445ms)
+✔ form CAS and volatile invalidation (0.420592ms)
+✔ interrupt retains scope and task CAS is forwarded (1.159133ms)
+✔ missing or unsupported integration fails closed; no real-host claim (0.379444ms)
+✔ actual entry exports Config/apply with a clearly synthetic schema dependency (3.437157ms)
+✔ multiple profiles roundtrip model effort and fallback intentions (3.349365ms)
+✔ reject unknown fields, secrets, bad effort, cycles and duplicate JSON keys (2.016149ms)
+✔ import preview exposes replacements and deletions (0.85756ms)
+✔ import uses owner CAS and rejects stale revision or missing authorization (2.635092ms)
+✔ saved multi-profile Config is authoritative and stale per-profile replacement blocks (4.140082ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 159.234753
