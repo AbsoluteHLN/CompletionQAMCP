@@ -83,8 +83,9 @@ class OutputTests(unittest.TestCase):
             env = dict(os.environ)
             env['PYTHONPATH'] = str(Path(__file__).resolve().parents[1])
             env['PYTHONIOENCODING'] = 'gbk'
+            env['PYTHONDONTWRITEBYTECODE'] = '1'
             proc = subprocess.run(
-                [sys.executable, '-m', 'completion_plugin.cli', 'text', str(draft),
+                [sys.executable, '-B', '-m', 'completion_plugin.cli', 'text', str(draft),
                  '--profile', 'conversation_summary'],
                 cwd=str(root), env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.assertEqual(proc.returncode, 0, proc.stderr.decode('utf-8', 'replace'))
