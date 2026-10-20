@@ -32,6 +32,8 @@ completion_plugin.polishing exposes the authorized host-model workflow for all t
 
 Local state/usage locks now use native POSIX or Windows byte-range locking. Windows project checks now use suspended process creation and a Job Object for bounded process-tree cleanup; native Windows validation is pending. See docs/WINDOWS-RUNNER.md. Restored successful task results cannot authorize a new completion without reconnecting current verifiers. DSH has a packable adapter but its trusted completionQAHost integration and official Schemastery runtime are not present here, so actual DSH loading, native-team calls and Stop behavior are unverified. Do not interpret mock tests or package creation as real-host installation.
 
+CLI output is UTF-8 regardless of the console code page. Redirected JSON is written as UTF-8 bytes, and an interactive console that cannot represent a character shows it escaped instead of aborting the command.
+
 To resume a cancelled final proposal without deleting state:
 
     python -m completion_plugin.cli resume --state /private/task-state.json

@@ -1,12 +1,14 @@
 """Operator-facing terminal workflow. Agent/host users should use trusted adapters."""
 import json
 import sys
+from .output import emit
 from .workflow import Workflow
 from .runtime import execute_review
 from .usage import Ledger
 
 
-def run(*, state, root, artifacts, read=input, write=print, terminal=None):
+def run(*, state, root, artifacts, read=input, write=None, terminal=None):
+    if write is None: write=emit
     if terminal is None: terminal=sys.stdin.isatty()
     if terminal is not True:
         raise ValueError('Interactive approval requires an operator terminal; piped approval is rejected')
@@ -48,7 +50,8 @@ def run(*, state, root, artifacts, read=input, write=print, terminal=None):
     return result
 
 
-def resume(state, *, read=input, write=print, terminal=None):
+def resume(state, *, read=input, write=None, terminal=None):
+    if write is None: write=emit
     if terminal is None:terminal=sys.stdin.isatty()
     if terminal is not True:raise ValueError('Operator terminal required')
     w=Workflow(state)

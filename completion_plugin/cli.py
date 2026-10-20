@@ -1,8 +1,8 @@
 """Local explicit actions. No automatic user confirmation through model inputs."""
 import argparse
-import json
 from pathlib import Path
 from .evidence import Review
+from .output import emit_json
 from .workflow import Workflow
 
 def main():
@@ -36,5 +36,5 @@ def main():
  else:
   from .editorial import review
   result=review(Path(a.file).read_text(encoding="utf-8"),a.profile,candidate=Path(a.candidate).read_text(encoding="utf-8") if a.candidate else None)
- print(json.dumps(result,ensure_ascii=False,indent=2))
+ emit_json(result)
 if __name__=='__main__':main()

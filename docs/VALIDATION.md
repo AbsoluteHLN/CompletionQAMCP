@@ -4,6 +4,13 @@
 
 Current aggregate: 147 Python unittest methods passed; 13 JavaScript tests passed. These counts cover this new code, not legacy v0.8 tests. Independent workflow audit contributes 38 methods within that aggregate, not an extra additive count.
 
+## 2026-10-20 Windows console output encoding
+
+Redirected CLI output is now written as UTF-8 bytes instead of depending on the active console code page. On a zh-CN Windows host (ANSI code page 936) the previous `print(json.dumps(..., ensure_ascii=False))` path raised `UnicodeEncodeError` on any character outside GBK, including emoji and a UTF-8 BOM, and aborted the command with no output. Four new methods in `tests/test_output.py` cover this, including a real subprocess that forces a GBK stdout encoding.
+
+Windows run on 2026-10-20: 166 Python tests collected, 163 passed, 3 skipped, 3 failed. The three failures are environment limits, not new regressions: two symlink tests need the Windows symlink privilege (`WinError 1314`) and `test_child_cleanup_after_success` still fails in the native Job Object runner. The same three failures occur on the unmodified baseline revision 0ac9b88 (162 tests collected, same skips, same failures), so this change adds no failing test.
+
+
 Actual local processes tested: Python syntax checks, temporary trusted unittest subprocesses, real MCP stdio initialize/list/call, real PTY wizard acceptance and cancellation. PTY input is a synthetic operator fixture, not an actual user's approval record.
 
 Simulated backends: host model generation/independent prose review, profile model discovery/smoke, DSH Config/native-team contracts. They do not prove actual provider access, billing, native agent availability, DSH loading or real Stop behavior.
