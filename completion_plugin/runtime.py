@@ -20,7 +20,8 @@ def execute_review(workflow, task, *, root, artifacts, ledger, trusted_tests=Fal
         status = 'pass' if result['allow_completion'] else 'fail'
     except Exception as exc:
         status, result = 'blocked', {'reason':type(exc).__name__}
-    attempt = ledger.record(task=task,model='local-no-model',status=status)
+    attempt = ledger.record(task=task,model='local-no-model',status=status,provider='local',
+                            operation='project_tests' if trusted_tests is True else 'syntax_check')
     workflow.finish(task,status=status,result={'review':result,'usage':attempt})
     return {'status':status,'review':result,'usage':attempt}
 
@@ -57,14 +58,16 @@ def dispatch_profile(workflow, task, *, profile, validator, context, ledger, sup
         if not isinstance(response,dict): raise ValueError('Invalid host response')
         usage=response.get('usage') or {}
         measured=usage.get('source','unknown')
-        entry=ledger.record(task=task,model=route.model,status='pass',tokens=usage.get('tokens'),
-            cost=usage.get('cost'),currency=usage.get('currency'),source=measured)
+        entry=ledger.record(task=task,model=route.model,provider=route.provider,status='pass',
+            operation='host_generation',tokens=usage.get('tokens'),
+            cost=usage.get('cost'),currency=usage.get('currency'),measurement_source=measured)
         # Host generation success is not task QA success.
         workflow.finish(task,status='blocked',result={'reason':'Output requires declared acceptance QA','usage':entry,'output':response.get('output')})
         supervisor.observe(task,kind='artifact',detail='Host output received; acceptance QA pending')
         return {'status':'review_required','route':route.route_id,'output':response.get('output'),'usage':entry,'skipped':reasons}
     except Exception as exc:
-        entry=ledger.record(task=task,model=route.model,status='fail')
+        entry=ledger.record(task=task,model=route.model,provider=route.provider,status='fail',
+                            operation='host_generation')
         workflow.finish(task,status='blocked',result={'reason':type(exc).__name__,'usage':entry})
         supervisor.observe(task,kind='blocker',detail=type(exc).__name__)
         return {'status':'blocked','reason':type(exc).__name__,'usage':entry}

@@ -11,7 +11,7 @@
 | T05 | implemented/tested | Three-profile exact candidate comparison and protected content diagnostics |
 | T06 | implemented/tested synthetic | Trusted immutable generation/adoption requests; no real provider |
 | T07 | implemented/tested local | Real MCP stdio diagnostics; no installed host Stop |
-| T08 | implemented/tested | Sequential events, explicit spec revisions and immutable approval proposal |
+| T08 | implemented/tested | Sequential events (event_sequence; legacy sequence readable), explicit spec revisions, immutable approval proposal; 2026-10-22 added before/after revision, reason, actor, task, document_id/task_id and the reviewing stage |
 | T09 | implemented/tested POSIX | Atomic state replacement, writer lock, corruption and stale-writer rejection |
 | T10 | implemented/tested bounded | Structured sources/waiver; CLI labels unverified supplied sources. Agent-led online research guided by Skill, not automated fetch by CLI |
 | T11 | implemented/tested | Direction and final exact-version confirmation stages |
@@ -19,7 +19,7 @@
 | T13 | implemented/tested PTY fixture | Full proposal shown; acceptance/rejection/resume, no piped approval. Host callbacks trusted |
 | T14 | implemented/tested | Dependencies, exclusive scopes, task results; no malicious-host isolation |
 | T15 | implemented/tested synthetic | User route/role binding and approved fallbacks; complexity classification not a learned classifier |
-| T16 | implemented/tested | Persistent attempt ledger, duplicate IDs, measured/estimated/unknown, conflict detection |
+| T16 | implemented/tested | Persistent attempt ledger, duplicate IDs, measured/estimated/unknown, conflict detection; 2026-10-22 added provider/run_id/operation/started_at/ended_at/unknown_reason, measurement_source naming (legacy source rows readable), failed and blocked attempts keep null billing with a stated reason |
 | T17 | implemented/tested fail-closed | Unknown cost or missing enforceable next maximum blocks hard-budget dispatch |
 | T18 | implemented/tested synthetic | Repeated blocker/noise pause, valid research/build progress; optional authorized cheap-host checkpoint. No persistent scheduler installed |
 | T19 | implemented/tested | Approved local execution→usage→declared checks→current completion; generated host output remains pending QA |

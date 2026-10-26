@@ -25,7 +25,7 @@ class Workflow:
             if self.data.get('schema_version') != 1 or not isinstance(self.data.get('events'), list):
                 raise ValueError('Unsupported or damaged state')
         else:
-            self.data = {'schema_version': 1, 'revision': 0, 'state': 'intake', 'spec': '',
+            self.data = {'schema_version': 1, 'document_id': uuid4().hex, 'revision': 0, 'state': 'intake', 'spec': '',
                          'events': [], 'approval': None, 'tasks': {}}
         self._validate()
         self._loaded = copy.deepcopy(self.data)
@@ -38,16 +38,34 @@ class Workflow:
         d = self.data
         if type(d.get('revision')) is not int or d['revision'] < 0 or not isinstance(d.get('spec'), str) or not isinstance(d.get('tasks'), dict):
             raise ValueError('Damaged state')
-        states = {'intake','research','direction_review','specification','specification_qa','awaiting_confirmation','approved','executing','complete'}
-        if d.get('state') not in states or any(e.get('sequence') != i+1 for i,e in enumerate(d['events'])):
-            raise ValueError('Damaged timeline')
+        document_id = d.get('document_id')
+        if document_id is not None and (not isinstance(document_id, str) or not document_id.strip()):
+            raise ValueError('Damaged document identity')
+        states = {'intake','research','direction_review','specification','specification_qa','awaiting_confirmation','approved','executing','reviewing','complete'}
+        if d.get('state') not in states:
+            raise ValueError('Damaged state')
+        for i, e in enumerate(d['events']):
+            # event_sequence is authoritative; a legacy 'sequence' key stays readable.
+            sequence = e.get('event_sequence', e.get('sequence')) if isinstance(e, dict) else None
+            if type(sequence) is not int or sequence != i+1:
+                raise ValueError('Damaged timeline')
+            at = e.get('at') if isinstance(e, dict) else None
+            try:
+                stamp = datetime.fromisoformat(at) if isinstance(at, str) else None
+            except ValueError:
+                stamp = None
+            if stamp is None or stamp.utcoffset() is None or stamp.utcoffset().total_seconds() != 0:
+                raise ValueError('Damaged timeline timestamp')
         if d.get('approval') is not None and d['approval'] != self._proposal():
             raise ValueError('Damaged approval')
-        if d['state'] in {'approved','executing','complete'} and d.get('approval') is None:
+        if d['state'] in {'approved','executing','reviewing','complete'} and d.get('approval') is None:
             raise ValueError('Approval missing')
         for t in d['tasks'].values():
             if t.get('status') not in {'not_run','running','pass','fail','blocked'} or not isinstance(t.get('depends'),list) or not isinstance(t.get('writes'),list) or not t.get('acceptance'):
                 raise ValueError('Damaged task')
+            task_id = t.get('task_id')
+            if task_id is not None and (not isinstance(task_id, str) or not task_id.strip()):
+                raise ValueError('Damaged task identity')
             if t['status'] in ('pass','fail') and not t.get('result'): raise ValueError('Missing result')
             if t['status'] == 'pass':
                 evidence=t['result'].get('review',{})
@@ -57,7 +75,7 @@ class Workflow:
         if d['state'] == 'complete' and (not d['tasks'] or any(t['status'] != 'pass' for t in d['tasks'].values())):
             raise ValueError('Incomplete completed state')
 
-    def _save(self, event):
+    def _save(self, event, *, reason=None, task=None, actor='trusted_local_host', revision_before=None):
         from .locking import writer_lock
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with writer_lock(self.path.with_name(self.path.name + '.lock')):
@@ -65,8 +83,11 @@ class Workflow:
                 raise ValueError("State removed; reload required")
             if self.path.exists() and json.loads(self.path.read_text(encoding="utf-8")) != self._loaded:
                 raise ValueError('State conflict; reload before modifying')
-            self.data['events'].append({'sequence': len(self.data['events']) + 1,
-                                        'at': now(), 'kind': event, 'revision': self.data['revision']})
+            before = self.data['revision'] if revision_before is None else revision_before
+            self.data['events'].append({'event_sequence': len(self.data['events']) + 1,
+                                        'at': now(), 'kind': event, 'actor': actor,
+                                        'revision_before': before, 'revision_after': self.data['revision'],
+                                        'reason': reason, 'task': task})
             self.path.parent.mkdir(parents=True, exist_ok=True)
             temp = self.path.with_name(self.path.name + '.' + uuid4().hex + '.tmp')
             temp.write_text(json.dumps(self.data, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -78,7 +99,7 @@ class Workflow:
     def transition(self, target, *, record):
         edges = {'intake': 'research', 'research': 'direction_review',
                  'direction_review': 'specification', 'specification': 'specification_qa',
-                 'specification_qa': 'awaiting_confirmation'}
+                 'specification_qa': 'awaiting_confirmation', 'executing': 'reviewing'}
         if edges.get(self.data['state']) != target or not record:
             raise ValueError('Invalid stage or missing record')
         if target == 'direction_review' and not (isinstance(record,dict) and (any(isinstance(u,str) and u.startswith('https://') for u in record.get('sources',[])) or record.get('research_waiver') == 'user_confirmed')):
@@ -90,12 +111,14 @@ class Workflow:
         if target == 'awaiting_confirmation' and not self.data['spec']:
             raise ValueError('Specification missing')
         self.data['state'] = target
-        self._save({'transition': target, 'record': copy.deepcopy(record)})
+        self._save({'transition': target, 'record': copy.deepcopy(record)},
+                   reason='stage transition to ' + target)
 
     def revise(self, text):
         if not isinstance(text, str) or not text.strip():
             raise ValueError('Empty specification')
         if text != self.data['spec']:
+            before = self.data['revision']
             self.data['spec'] = text
             self.data['revision'] += 1
             self.data['approval'] = None
@@ -103,7 +126,8 @@ class Workflow:
                 task.update(status='not_run', result=None)
             if self.data['state'] not in ('intake', 'research', 'direction_review'):
                 self.data['state'] = 'specification'
-            self._save('specification_revised')
+            self._save('specification_revised', reason='specification content changed',
+                       revision_before=before)
         return self.data['revision']
 
     def approve(self):
@@ -115,7 +139,8 @@ class Workflow:
             raise ValueError('Explicit confirmation did not match shown version')
         self.data['approval'] = copy.deepcopy(shown)
         self.data['state'] = 'approved'
-        self._save('user_confirmed')
+        self._save('user_confirmed', actor='confirmed_user',
+                   reason='exact proposal confirmed through the trusted host')
 
     def add_task(self, name, *, depends=(), writes=(), acceptance='', required_checks=('code',), profile_binding=None, complexity='standard', inputs=None, code_mode=None):
         depends, writes, required_checks = list(depends), list(writes), list(required_checks)
@@ -131,11 +156,13 @@ class Workflow:
             if path.is_absolute() or '..' in path.parts or not path.parts:
                 raise ValueError('Unsafe write scope')
             normalized.append(path.as_posix())
-        self.data['tasks'][name] = {'depends': list(depends), 'writes': normalized,
+        before = self.data['revision']
+        self.data['tasks'][name] = {'task_id': uuid4().hex, 'depends': list(depends), 'writes': normalized,
                                     'acceptance': acceptance, 'code_mode':code_mode, 'inputs':copy.deepcopy(inputs), 'profile_binding':copy.deepcopy(profile_binding), 'complexity':complexity, 'required_checks': required_checks, 'status': 'not_run', 'result': None}
         self.data['revision'] += 1
         self.data['approval'] = None
-        self._save('task_added')
+        self._save('task_added', reason='task declared in the specification', task=name,
+                   revision_before=before)
 
     def start(self, name):
         approval = self.data['approval']
@@ -151,7 +178,7 @@ class Workflow:
                 raise ValueError('Write scopes overlap')
         task['status'] = 'running'
         self.data['state'] = 'executing'
-        self._save('task_started')
+        self._save('task_started', reason='task execution started', task=name)
 
     def finish(self, name, *, status, result):
         task = self.data['tasks'][name]
@@ -164,10 +191,10 @@ class Workflow:
             if ('code' in task['required_checks'] and evidence.get('code_mode') != task['code_mode']) or evidence.get('revision') != self.data['revision'] or evidence.get('allow_completion') is not True or any(evidence.get('checks',{}).get(c) != 'pass' for c in task.get('required_checks',[])):
                 raise ValueError('Required acceptance evidence missing')
         task.update(status=status, result=copy.deepcopy(result))
-        self._save('task_result')
+        self._save('task_result', reason='task result: ' + status, task=name)
 
     def complete(self):
-        if self.data['state'] != 'executing':
+        if self.data['state'] not in ('executing', 'reviewing'):
             raise ValueError('No current execution')
         if not self.data['tasks'] or any(t['status'] != 'pass' for t in self.data['tasks'].values()):
             raise ValueError('Required task results incomplete')
@@ -176,4 +203,4 @@ class Workflow:
         if any(name not in self._verifiers or self._verifiers[name]() is not True for name in self.data['tasks']):
             raise ValueError('Current acceptance recheck required')
         self.data['state'] = 'complete'
-        self._save('completed')
+        self._save('completed', reason='all required tasks passed the current recheck')

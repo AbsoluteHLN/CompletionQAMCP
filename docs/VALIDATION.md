@@ -22,3 +22,10 @@ Publication/install not performed. Source package excludes transfer helpers and 
 Final user-workflow review additionally verified approval-mode matching, non-boolean opt-in rejection, explicit unverified-source acknowledgement, and cancel/resume over real local PTY fixtures. No remaining blocking issue was reported in that review.
 
 DSH integration example syntax and local action-store restart/writer exclusion/return isolation passed. npm pack with a temporary cache succeeded after its default cache path was unavailable; six package files were included. No runtime dependency was installed.
+
+## 2026-10-22 spec-v002 alignment increment
+
+Independent spec-gap audit against spec-v002; see ../../verify-evidence/2026-10-22-completionqa-spec-audit.md for the full item-by-item record. Timeline events now carry event_sequence (legacy 'sequence' files stay readable), UTC RFC3339 stamps, revision_before/revision_after, reason, actor and task; state gains a random document_id and tasks gain random task_id; the reviewing stage joins the state machine between executing and complete. The usage ledger records provider, run_id, operation, started_at/ended_at and unknown_reason, renames source to measurement_source (old ledgers remain readable), and keeps failed or blocked attempts with null billing values plus a stated reason.
+
+Windows run on 2026-10-22 (Python 3.13.14): 191 tests collected, 184 passed, 2 failed, 2 errors, 3 skipped. The four non-passing cases are the same environment limits as the baseline 166-test run (two symlink-privilege tests, the Job Object child-cleanup test, and the offline mcp import missing anyio); the 25 new tests all pass and no previously passing test regressed. Changed files were backed up as *.bak-2026-10-22 before editing.
+
