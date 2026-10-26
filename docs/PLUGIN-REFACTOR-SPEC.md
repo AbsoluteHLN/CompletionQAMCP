@@ -1,6 +1,8 @@
 # CompletionQA 通用插件重构规格
 
-状态：待批准 spec-v002；2026-10-19 02:41 UTC。独立插件方向已由用户确认；完整规格等待批准；不是已实现功能或已通过验收。
+状态：spec-v002 已获批准（独立插件方向由用户确认，2026-10-19 02:41 UTC 记录；实施增量与验收状态以 `docs/IMPLEMENTATION-STATUS.md` 与 `docs/VALIDATION.md` 为准）。本文保留设计当时的原始措辞（含当时的"待批准"表述），**不再**表示当前未获批。
+
+职责边界（谁负责什么、谁明确不负责什么）见 [`docs/BOUNDARY.md`](BOUNDARY.md)：本插件拥有任务包审批、执行监督、模型路由与消耗记账、收尾复核；KalciriteThinking 只提供公开规则来源，cross-agent-bridge 只传递，agent-memory 只记事实，Agent Workbench 负责群组与显式策略路由。
 
 ## 目标与交付形态
 

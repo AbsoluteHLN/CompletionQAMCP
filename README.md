@@ -2,6 +2,8 @@
 
 中文快速入口：[Codex / Windows 安装与手动测试](docs/INSTALL-CODEX-WINDOWS.md)。旧 MCP 迁移：[说明](docs/MIGRATION-v0.4-to-plugin.md)。
 
+Ownership boundary (one owner per concern): [docs/BOUNDARY.md](docs/BOUNDARY.md).
+
 Independent private plugin under implementation against approved spec-v002. No cryptographic content identifiers are used. Explicit revisions and direct byte comparisons do not provide tamper protection.
 
 Run without installation:
