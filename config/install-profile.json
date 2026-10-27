@@ -1,0 +1,19 @@
+{
+  "schema": "kalcirite.plugin-install/1",
+  "product": "completion-review",
+  "channel": "local-private",
+  "defaults": {
+    "pluginRoot": "E:/KalciriteTools/tooLib/completion-review",
+    "toolLibraryRoot": "E:/KalciriteTools"
+  },
+  "overrides": {
+    "pluginRoot": "COMPLETION_REVIEW_PLUGIN_ROOT",
+    "toolLibraryRoot": "KALCIRITE_TOOLS_HOME"
+  },
+  "publicInstall": {
+    "firstRunPathSelection": true,
+    "allowPluginRootOverride": true,
+    "allowToolLibraryRootOverride": true,
+    "persistSelectionOutsidePackage": true
+  }
+}

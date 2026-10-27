@@ -2,6 +2,19 @@
 
 2026-10-19。仓库现为独立 Completion Review Plugin；旧 CompletionQAMCP v0.4 保留在 Git 历史。新代码无需 API key；模型候选生成使用已授权宿主，未接入时明确 blocked。
 
+## KalciriteTools 本地私有默认
+
+本机私有接入的 canonical source 是
+`E:\KalciriteTools\tooLib\completion-review`，共享工具库根是
+`E:\KalciriteTools`。DSH 适配包
+`E:\KalciriteTools\agent-adapters\dsh-completion-review-mcp` 已按此默认值启动
+`completion_plugin.server`，不再依赖 `D:\Cetus\dshconfig\plugins\CompletionQAMCP`。
+
+默认和公开安装选项写在 `config/install-profile.json`。公开发行版首次安装时应让用户选择
+`pluginRoot` 与 `toolLibraryRoot`，并把选择保存到安装目录以外的用户配置；可以用
+`COMPLETION_REVIEW_PLUGIN_ROOT` 和 `KALCIRITE_TOOLS_HOME` 覆盖默认路径。公开版本不得把
+`E:\KalciriteTools` 当作所有用户都存在的路径，也不得把本机私有路径写入用户项目。
+
 ## 1. 获取与运行
 
 在有此私有仓库访问权的 PowerShell 中：

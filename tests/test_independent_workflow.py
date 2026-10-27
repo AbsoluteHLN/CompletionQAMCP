@@ -140,7 +140,7 @@ class IndependentWorkflowTests(unittest.TestCase):
     def test_damaged_event_sequence_rejected(self):
         workflow = self.ready()
         state = json.loads(workflow.path.read_text())
-        state['events'][-1]['sequence'] = 1
+        state['events'][-1]['event_sequence'] = 1
         workflow.path.write_text(json.dumps(state))
         with self.assertRaises(ValueError):
             Workflow(workflow.path)
@@ -327,7 +327,7 @@ class IndependentUsageTests(unittest.TestCase):
                 with self.subTest(field=field, value=value):
                     with self.assertRaises(ValueError):
                         Ledger().record(task='task', model='model', status='fail',
-                                        source='actual', currency='USD', **{field: value})
+                                        measurement_source='actual', currency='USD', **{field: value})
 
     def test_unknown_cost_blocks_budget(self):
         ledger = Ledger()
@@ -337,19 +337,19 @@ class IndependentUsageTests(unittest.TestCase):
     def test_estimated_cost_does_not_guarantee_budget(self):
         ledger = Ledger()
         ledger.record(task='task', model='model', status='pass', cost=1,
-                      currency='USD', source='estimated')
+                      currency='USD', measurement_source='estimated')
         self.assertFalse(ledger.budget_allows(10, 'USD'))
 
     def test_currency_mismatch_blocks_budget(self):
         ledger = Ledger()
         ledger.record(task='task', model='model', status='pass', cost=1,
-                      currency='EUR', source='actual')
+                      currency='EUR', measurement_source='actual')
         self.assertFalse(ledger.budget_allows(10, 'USD'))
 
     def test_failed_attempt_cost_counts(self):
         ledger = Ledger()
         ledger.record(task='task', model='model', status='fail', cost=10,
-                      currency='USD', source='actual')
+                      currency='USD', measurement_source='actual')
         self.assertFalse(ledger.budget_allows(10, 'USD'))
 
 

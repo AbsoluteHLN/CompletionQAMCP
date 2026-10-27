@@ -2,6 +2,8 @@
 
 中文快速入口：[Codex / Windows 安装与手动测试](docs/INSTALL-CODEX-WINDOWS.md)。旧 MCP 迁移：[说明](docs/MIGRATION-v0.4-to-plugin.md)。
 
+Ownership boundary (one owner per concern): [docs/BOUNDARY.md](docs/BOUNDARY.md).
+
 Independent private plugin under implementation against approved spec-v002. No cryptographic content identifiers are used. Explicit revisions and direct byte comparisons do not provide tamper protection.
 
 Run without installation:
@@ -31,6 +33,8 @@ completion_plugin.polishing exposes the authorized host-model workflow for all t
 ## Operational limits
 
 Local state/usage locks now use native POSIX or Windows byte-range locking. Windows project checks now use suspended process creation and a Job Object for bounded process-tree cleanup; native Windows validation is pending. See docs/WINDOWS-RUNNER.md. Restored successful task results cannot authorize a new completion without reconnecting current verifiers. DSH has a packable adapter but its trusted completionQAHost integration and official Schemastery runtime are not present here, so actual DSH loading, native-team calls and Stop behavior are unverified. Do not interpret mock tests or package creation as real-host installation.
+
+CLI output is UTF-8 regardless of the console code page. Redirected JSON is written as UTF-8 bytes, and an interactive console that cannot represent a character shows it escaped instead of aborting the command.
 
 To resume a cancelled final proposal without deleting state:
 
